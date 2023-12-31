@@ -41,11 +41,7 @@ letter_probabilities = {letter: letter_freq[letter] / sum(letter_freq.values()) 
 
 def calculate_entropy(word):
     entropy = -sum(letter_probabilities[letter] * math.log(letter_probabilities[letter], 2) for letter in set(word))
-    if len(word) == 1:
-        normalized_entropy = 0
-    else:
-        normalized_entropy = entropy / math.log(len(word), 2)
-    return normalized_entropy
+    return entropy
 
 # Calculate entropy for each word
 word_entropies = {word: calculate_entropy(word) for word in words}
