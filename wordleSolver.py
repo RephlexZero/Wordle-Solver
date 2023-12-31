@@ -15,11 +15,11 @@ def letters_not_in_word(guess, word):
     return not_in_word
 
 def letters_in_word(guess, word):
-    positions = []
-    for i, letter in enumerate(word):
-        if letter in guess:
-            positions.append((i, letter))
-    return positions
+    in_word = []
+    for letter in guess:
+        if letter in word:
+            in_word.append(letter)
+    return in_word
 
 def letters_in_correct_positions(guess, word):
     positions = []
@@ -41,7 +41,7 @@ letter_probabilities = {letter: letter_freq[letter] / sum(letter_freq.values()) 
 
 def calculate_entropy(word):
     # Calculate entropy
-    entropy = -sum(letter_probabilities[letter] * math.log(letter_probabilities[letter], 2) for letter in word)
+    entropy = -sum(letter_probabilities[letter] * math.log(letter_probabilities[letter], 2) for letter in set(word))
 
     # Normalize entropy
     if len(word) == 1:
@@ -60,24 +60,19 @@ sorted_words = sorted(word_entropies.items(), key=lambda x: x[1], reverse=True)
 desired_length = 5
 guessing_words = [word for word in sorted_words.copy() if len(word[0]) == desired_length]
 
-# Print top 10 guessing words
-print("Top 10 guessing words:")
-for word in guessing_words[:10]:
-    print(word)
-
 random_word = random.choice(guessing_words)[0]
 print("Random word:", random_word)
 
 guesses_taken = 0
 while True:
     highest_entropy_word = guessing_words[0][0]
+    print("Length of guessing set:", len(guessing_words))
+    print("Guessed:", highest_entropy_word)
     guesses_taken += 1
     
     # Update guess logic here
     
     if highest_entropy_word == random_word:
-
-        print("Guessed:", highest_entropy_word)
         break
     else:
         # Remove guessed word from guessing words
@@ -87,11 +82,12 @@ while True:
         for letter in letters_not_in_word(highest_entropy_word, random_word):
             guessing_words = [word for word in guessing_words if letter not in word[0]]
 
+        for letter in letters_in_word(highest_entropy_word, random_word):
+            guessing_words = [word for word in guessing_words if letter in word[0]]
+
         for i, letter in letters_in_correct_positions(highest_entropy_word, random_word):
             guessing_words = [word for word in guessing_words if word[0][i] == letter]
 
-
-        
 print("Guesses taken:", guesses_taken)
 
 
