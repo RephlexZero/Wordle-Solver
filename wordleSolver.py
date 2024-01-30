@@ -52,8 +52,10 @@ def cull_word_list(word_list, guessed_word, target_word):
 def guess_highest_entropy_word(word_entropy_dict):
     return max(word_entropy_dict, key=word_entropy_dict.get)
 
-def __main__(word_length=5):
+def __main__(word_length=5, word_list_length=900):
     word_list = [word.lower() for word in words.words() if len(word) == word_length]
+    # Make the list of length k with random words, real wordle is k = 900
+    word_list = random.choices(word_list, k=word_list_length)
     # Choose a random word from the list
     target_word = random.choice(word_list)
 
@@ -61,16 +63,14 @@ def __main__(word_length=5):
     word_entropy_dict = calculate_word_entropy_dict(word_list, letter_probability)
     
     guesses = 0
+    print("Guess:\tList Size:")
     while (True):
         guesses += 1
-        # print("Word list size:", len(word_list))
         guessed_word = guess_highest_entropy_word(word_entropy_dict)
+        print(guessed_word,"\t", len(word_list))
         if guessed_word == target_word:
-            print("Correct! The word was", target_word , "in", guesses, "guesses.")
+            print("Correct! In", guesses, "guesses.")
             return guesses
-#        else:
-#            print(guessed_word, word_entropy_dict[guessed_word], "bits")
-
         word_list = cull_word_list(word_list, guessed_word, target_word)
         # letter_probability = calculate_letter_probability(word_list, word_length)
         word_entropy_dict = calculate_word_entropy_dict(word_list, letter_probability)
@@ -78,7 +78,7 @@ def __main__(word_length=5):
 total_guesses = 0
 for i in range(100):
     total_guesses += __main__()
-    print("Average:", total_guesses / (i + 1))
+    print("Average:", round(total_guesses / (i + 1), 2),"\n")
  
 
 
